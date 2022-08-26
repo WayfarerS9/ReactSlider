@@ -9,15 +9,18 @@ let arrOfPictures = [
   "../img/2.jpg",
 ];
 
-let Main = () => {
+let Main = () => {  
   const slideRefs = [];
   let touchPosition = null;
+  let isButtonAvailable = true
+  
 
-  const [indexOfPreviousSlide, setIndexOfPreviousSlide] = useState(arrOfPictures.length - 1)
-  const [indexOfFirstSlide, setIndexOfFirstSlide] = useState(0)
-  const [indexOfSecondSlide, setIndexOfSecondSlide] = useState(1)
-  const [indexOfThirdSlide, setIndexOfThirdSlide] = useState(2)
-  const [indexOfFourthSlide, setIndexOfFourthSlide] = useState(3)
+  const [indexOfPreviousSlide, setIndexOfPreviousSlide] = useState(arrOfPictures.length - 1);
+  const [indexOfFirstSlide, setIndexOfFirstSlide] = useState(0);
+  const [indexOfSecondSlide, setIndexOfSecondSlide] = useState(1);
+  const [indexOfThirdSlide, setIndexOfThirdSlide] = useState(2);
+  const [indexOfFourthSlide, setIndexOfFourthSlide] = useState(3);
+
 
   const handleTouchStart = ($event) => {
     touchPosition = $event.touches[0].clientX
@@ -63,146 +66,159 @@ let Main = () => {
   });
 
   function moveForwardSlide() {
+
     if (slideRefs.length === 2) {
       moveForwardSlidesOfTwoElemets();
       return;
     }    
 
-    let promiseOfFirstSlide = new Promise((resolve, reject) => {
-      slideRefs[indexOfFirstSlide].addEventListener(
-        "animationend",
-        function handler() {
-          slideRefs[indexOfFirstSlide].removeEventListener(
-            "animationend",
-            handler
-          );
-          resolve();
+    if(isButtonAvailable) {
+      isButtonAvailable = false
+
+      let promiseOfFirstSlide = new Promise((resolve, reject) => {
+        slideRefs[indexOfFirstSlide].addEventListener(
+          "animationend",
+          function handler() {
+            slideRefs[indexOfFirstSlide].removeEventListener(
+              "animationend",
+              handler
+            );
+            resolve();
+          }
+        );
+      });
+
+      let promiseOfSecondSlide = new Promise((resolve, reject) => {
+        slideRefs[indexOfSecondSlide].addEventListener(
+          "animationend",
+          function handler() {
+            slideRefs[indexOfSecondSlide].removeEventListener(
+              "animationend",
+              handler
+            );
+            resolve();
+          }
+        );
+      });
+
+      let promiseOfThirdSlide = new Promise((resolve, reject) => {
+        slideRefs[indexOfThirdSlide].addEventListener(
+          "animationend",
+          function handler() {
+            slideRefs[indexOfThirdSlide].removeEventListener(
+              "animationend",
+              handler
+            );
+            resolve();
+          }
+        );
+      });
+
+      let arrOfPromises = [
+        promiseOfFirstSlide,
+        promiseOfSecondSlide,
+        promiseOfThirdSlide,
+      ];
+
+      slideRefs[indexOfFirstSlide].classList.add("selectedSlideMoveOut");
+      slideRefs[indexOfSecondSlide].classList.add("secondSlideMoveOut");
+      slideRefs[indexOfThirdSlide].classList.add("thirdSlideMoveOut");
+
+      Promise.allSettled(arrOfPromises).then(() => {
+        slideRefs[indexOfFirstSlide].classList.remove(
+          "selectedSlideMoveOut",
+          "selectedSlide"
+        );
+        slideRefs[indexOfSecondSlide].classList.remove(
+          "secondSlide",
+          "secondSlideMoveOut"
+        );
+        slideRefs[indexOfThirdSlide].classList.remove(
+          "thirdSlide",
+          "thirdSlideMoveOut"
+        );
+
+        slideRefs[indexOfSecondSlide].classList.add("selectedSlide");
+        slideRefs[indexOfThirdSlide].classList.add("secondSlide");
+
+        if (slideRefs.length > 3) {
+          slideRefs[indexOfFourthSlide].classList.add("thirdSlide");
+        } else {
+          slideRefs[indexOfFirstSlide].classList.add("thirdSlide");
         }
-      );
-    });
 
-    let promiseOfSecondSlide = new Promise((resolve, reject) => {
-      slideRefs[indexOfSecondSlide].addEventListener(
-        "animationend",
-        function handler() {
-          slideRefs[indexOfSecondSlide].removeEventListener(
-            "animationend",
-            handler
-          );
-          resolve();
+        setValueAfterMoveForward(indexOfFirstSlide, setIndexOfFirstSlide);
+        setValueAfterMoveForward(indexOfSecondSlide, setIndexOfSecondSlide);
+        setValueAfterMoveForward(indexOfThirdSlide, setIndexOfThirdSlide);
+        setValueAfterMoveForward(indexOfPreviousSlide, setIndexOfPreviousSlide);
+
+        if (slideRefs.length > 3) {
+          setValueAfterMoveForward(indexOfFourthSlide, setIndexOfFourthSlide);
         }
-      );
-    });
-
-    let promiseOfThirdSlide = new Promise((resolve, reject) => {
-      slideRefs[indexOfThirdSlide].addEventListener(
-        "animationend",
-        function handler() {
-          slideRefs[indexOfThirdSlide].removeEventListener(
-            "animationend",
-            handler
-          );
-          resolve();
-        }
-      );
-    });
-
-    let arrOfPromises = [
-      promiseOfFirstSlide,
-      promiseOfSecondSlide,
-      promiseOfThirdSlide,
-    ];
-
-    slideRefs[indexOfFirstSlide].classList.add("selectedSlideMoveOut");
-    slideRefs[indexOfSecondSlide].classList.add("secondSlideMoveOut");
-    slideRefs[indexOfThirdSlide].classList.add("thirdSlideMoveOut");
-
-    Promise.allSettled(arrOfPromises).then(() => {
-      slideRefs[indexOfFirstSlide].classList.remove(
-        "selectedSlideMoveOut",
-        "selectedSlide"
-      );
-      slideRefs[indexOfSecondSlide].classList.remove(
-        "secondSlide",
-        "secondSlideMoveOut"
-      );
-      slideRefs[indexOfThirdSlide].classList.remove(
-        "thirdSlide",
-        "thirdSlideMoveOut"
-      );
-
-      slideRefs[indexOfSecondSlide].classList.add("selectedSlide");
-      slideRefs[indexOfThirdSlide].classList.add("secondSlide");
-
-      if (slideRefs.length > 3) {
-        slideRefs[indexOfFourthSlide].classList.add("thirdSlide");
-      } else {
-        slideRefs[indexOfFirstSlide].classList.add("thirdSlide");
-      }
-
-      setValueAfterMoveForward(indexOfFirstSlide, setIndexOfFirstSlide);
-      setValueAfterMoveForward(indexOfSecondSlide, setIndexOfSecondSlide);
-      setValueAfterMoveForward(indexOfThirdSlide, setIndexOfThirdSlide);
-      setValueAfterMoveForward(indexOfPreviousSlide, setIndexOfPreviousSlide);
-
-      if (slideRefs.length > 3) {
-        setValueAfterMoveForward(indexOfFourthSlide, setIndexOfFourthSlide);
-      }
-    });
+        
+        isButtonAvailable = true;
+      });
+    }
   }
 
   function moveForwardSlidesOfTwoElemets() {
-    let promiseOfFirstSlide = new Promise((resolve, reject) => {
-      slideRefs[indexOfFirstSlide].addEventListener(
-        "animationend",
-        function handler() {
-          slideRefs[indexOfFirstSlide].removeEventListener(
-            "animationend",
-            handler
-          );
-          resolve();
-        }
+    if(isButtonAvailable) {
+
+      isButtonAvailable = false
+      let promiseOfFirstSlide = new Promise((resolve, reject) => {
+        slideRefs[indexOfFirstSlide].addEventListener(
+          "animationend",
+          function handler() {
+            slideRefs[indexOfFirstSlide].removeEventListener(
+              "animationend",
+              handler
+            );
+            resolve();
+          }
+        );
+      });
+
+      let promiseOfSecondSlide = new Promise((resolve, reject) => {
+        slideRefs[indexOfSecondSlide].addEventListener(
+          "animationend",
+          function handler() {
+            slideRefs[indexOfSecondSlide].removeEventListener(
+              "animationend",
+              handler
+            );
+            resolve();
+          }
+        );
+      });
+
+      let arrOfPromises = [promiseOfFirstSlide, promiseOfSecondSlide];
+
+      slideRefs[indexOfFirstSlide].classList.add(
+        "selectedSlideMoveOutIfTwoSlides"
       );
-    });
+      slideRefs[indexOfSecondSlide].classList.add("secondSlideMoveOut");
 
-    let promiseOfSecondSlide = new Promise((resolve, reject) => {
-      slideRefs[indexOfSecondSlide].addEventListener(
-        "animationend",
-        function handler() {
-          slideRefs[indexOfSecondSlide].removeEventListener(
-            "animationend",
-            handler
-          );
-          resolve();
-        }
-      );
-    });
+      Promise.allSettled(arrOfPromises).then(() => {
+        slideRefs[indexOfFirstSlide].classList.remove(
+          "selectedSlideMoveOutIfTwoSlides",
+          "selectedSlide"
+        );
+        slideRefs[indexOfSecondSlide].classList.remove(
+          "secondSlideMoveOut",
+          "secondSlide"
+        );
+        slideRefs[indexOfFirstSlide].classList.add("secondSlide");
+        slideRefs[indexOfSecondSlide].classList.add("selectedSlide");
 
-    let arrOfPromises = [promiseOfFirstSlide, promiseOfSecondSlide];
-
-    slideRefs[indexOfFirstSlide].classList.add(
-      "selectedSlideMoveOutIfTwoSlides"
-    );
-    slideRefs[indexOfSecondSlide].classList.add("secondSlideMoveOut");
-
-    Promise.allSettled(arrOfPromises).then(() => {
-      slideRefs[indexOfFirstSlide].classList.remove(
-        "selectedSlideMoveOutIfTwoSlides",
-        "selectedSlide"
-      );
-      slideRefs[indexOfSecondSlide].classList.remove(
-        "secondSlideMoveOut",
-        "secondSlide"
-      );
-      slideRefs[indexOfFirstSlide].classList.add("secondSlide");
-      slideRefs[indexOfSecondSlide].classList.add("selectedSlide");
-
-      setValueAfterMoveForward(indexOfFirstSlide, setIndexOfFirstSlide);
-      setValueAfterMoveForward(indexOfSecondSlide, setIndexOfSecondSlide);
-    });
+        setValueAfterMoveForward(indexOfFirstSlide, setIndexOfFirstSlide);
+        setValueAfterMoveForward(indexOfSecondSlide, setIndexOfSecondSlide);
+        
+        isButtonAvailable = true
+      });
+    }
   }
 
-  function setValueAfterMoveForward(indexOfSlide, setNewIndex) {
+  function setValueAfterMoveForward(indexOfSlide, setNewIndex) {    
     let result = (indexOfSlide += 1);
     if (result > slideRefs.length - 1) {
       setNewIndex(result - slideRefs.length);
@@ -217,135 +233,147 @@ let Main = () => {
       return;
     }
 
-    let promiseOfPreviousSlide = new Promise((resolve, reject) => {
-      slideRefs[indexOfPreviousSlide].addEventListener(
-        "animationend",
-        function handler() {
-          slideRefs[indexOfPreviousSlide].removeEventListener(
-            "animationend",
-            handler
-          );
-          resolve();
-        }
-      );
-    });
+    if(isButtonAvailable) {
+      isButtonAvailable = false
 
-    let promiseOfSelectedSlide = new Promise((resolve, reject) => {
-      slideRefs[indexOfFirstSlide].addEventListener(
-        "animationend",
-        function handler() {
-          slideRefs[indexOfFirstSlide].removeEventListener(
-            "animationend",
-            handler
-          );
-          resolve();
-        }
-      );
-    });
+      let promiseOfPreviousSlide = new Promise((resolve, reject) => {
+        slideRefs[indexOfPreviousSlide].addEventListener(
+          "animationend",
+          function handler() {
+            slideRefs[indexOfPreviousSlide].removeEventListener(
+              "animationend",
+              handler
+            );
+            resolve();
+          }
+        );
+      });
 
-    let promiseOfSecondSlide = new Promise((resolve, reject) => {
-      slideRefs[indexOfSecondSlide].addEventListener(
-        "animationend",
-        function handler() {
-          slideRefs[indexOfSecondSlide].removeEventListener(
-            "animationend",
-            handler
-          );
-          resolve();
-        }
-      );
-    });
+      let promiseOfSelectedSlide = new Promise((resolve, reject) => {
+        slideRefs[indexOfFirstSlide].addEventListener(
+          "animationend",
+          function handler() {
+            slideRefs[indexOfFirstSlide].removeEventListener(
+              "animationend",
+              handler
+            );
+            resolve();
+          }
+        );
+      });
 
-    let arrOfPromises = [
-      promiseOfPreviousSlide,
-      promiseOfSelectedSlide,
-      promiseOfSecondSlide,
-    ];
+      let promiseOfSecondSlide = new Promise((resolve, reject) => {
+        slideRefs[indexOfSecondSlide].addEventListener(
+          "animationend",
+          function handler() {
+            slideRefs[indexOfSecondSlide].removeEventListener(
+              "animationend",
+              handler
+            );
+            resolve();
+          }
+        );
+      });
 
-    slideRefs[indexOfPreviousSlide].classList.add(
-      "previousSlideMoveBack",
-      "selectedSlide"
-    );
-    slideRefs[indexOfFirstSlide].classList.add(
-      "selectedSlideMoveBack",
-      "secondSlide"
-    );
-    slideRefs[indexOfSecondSlide].classList.add(
-      "secondSlideMoveBack",
-      "thirdSlide"
-    );
-    slideRefs[indexOfThirdSlide].classList.remove("thirdSlide");
+      let arrOfPromises = [
+        promiseOfPreviousSlide,
+        promiseOfSelectedSlide,
+        promiseOfSecondSlide,
+      ];
 
-    Promise.allSettled(arrOfPromises).then(() => {
-      slideRefs[indexOfPreviousSlide].classList.remove("previousSlideMoveBack");
-      slideRefs[indexOfFirstSlide].classList.remove(
-        "selectedSlideMoveBack",
+      slideRefs[indexOfPreviousSlide].classList.add(
+        "previousSlideMoveBack",
         "selectedSlide"
       );
-      slideRefs[indexOfSecondSlide].classList.remove(
-        "secondSlideMoveBack",
+      slideRefs[indexOfFirstSlide].classList.add(
+        "selectedSlideMoveBack",
         "secondSlide"
       );
+      slideRefs[indexOfSecondSlide].classList.add(
+        "secondSlideMoveBack",
+        "thirdSlide"
+      );
+      slideRefs[indexOfThirdSlide].classList.remove("thirdSlide");
 
-      setValueAfterMoveBack(indexOfFirstSlide, setIndexOfFirstSlide);
-      setValueAfterMoveBack(indexOfSecondSlide, setIndexOfSecondSlide);
-      setValueAfterMoveBack(indexOfThirdSlide, setIndexOfThirdSlide);
-      setValueAfterMoveBack(indexOfFourthSlide, setIndexOfFourthSlide);
-      setValueAfterMoveBack(indexOfPreviousSlide, setIndexOfPreviousSlide);
-    });
+      Promise.allSettled(arrOfPromises).then(() => {
+        slideRefs[indexOfPreviousSlide].classList.remove("previousSlideMoveBack");
+        slideRefs[indexOfFirstSlide].classList.remove(
+          "selectedSlideMoveBack",
+          "selectedSlide"
+        );
+        slideRefs[indexOfSecondSlide].classList.remove(
+          "secondSlideMoveBack",
+          "secondSlide"
+        );
+
+        setValueAfterMoveBack(indexOfFirstSlide, setIndexOfFirstSlide);
+        setValueAfterMoveBack(indexOfSecondSlide, setIndexOfSecondSlide);
+        setValueAfterMoveBack(indexOfThirdSlide, setIndexOfThirdSlide);
+        setValueAfterMoveBack(indexOfFourthSlide, setIndexOfFourthSlide);
+        setValueAfterMoveBack(indexOfPreviousSlide, setIndexOfPreviousSlide);
+        
+        isButtonAvailable = true
+      });
+    }
   }
 
   function moveBackSlideIfTwoElements() {
-    let promiseOfSelectedSlide = new Promise((resolve, reject) => {
-      slideRefs[indexOfFirstSlide].addEventListener(
-        "animationend",
-        function handler() {
-          slideRefs[indexOfFirstSlide].removeEventListener(
-            "animationend",
-            handler
-          );
-          resolve();
-        }
-      );
-    });
+    if(isButtonAvailable) {
+      isButtonAvailable = false
 
-    let promiseOfSecondSlide = new Promise((resolve, reject) => {
-      slideRefs[indexOfSecondSlide].addEventListener(
-        "animationend",
-        function handler() {
-          slideRefs[indexOfSecondSlide].removeEventListener(
-            "animationend",
-            handler
-          );
-          resolve();
-        }
-      );
-    });
+      let promiseOfSelectedSlide = new Promise((resolve, reject) => {
+        slideRefs[indexOfFirstSlide].addEventListener(
+          "animationend",
+          function handler() {
+            slideRefs[indexOfFirstSlide].removeEventListener(
+              "animationend",
+              handler
+            );
+            resolve();
+          }
+        );
+      });
 
-    let arrOfPromises = [promiseOfSelectedSlide, promiseOfSecondSlide];
+      let promiseOfSecondSlide = new Promise((resolve, reject) => {
+        slideRefs[indexOfSecondSlide].addEventListener(
+          "animationend",
+          function handler() {
+            slideRefs[indexOfSecondSlide].removeEventListener(
+              "animationend",
+              handler
+            );
+            resolve();
+          }
+        );
+      });
 
-    slideRefs[indexOfFirstSlide].classList.add(
-      "selectedSlideMoveBack",
-      "secondSlide"
-    );
-    slideRefs[indexOfSecondSlide].classList.add(
-      "secondSlideMoveBackIfTwoElements",
-      "selectedSlide"
-    );
+      let arrOfPromises = [promiseOfSelectedSlide, promiseOfSecondSlide];
 
-    Promise.allSettled(arrOfPromises).then(() => {
-      slideRefs[indexOfFirstSlide].classList.remove(
+      slideRefs[indexOfFirstSlide].classList.add(
         "selectedSlideMoveBack",
-        "selectedSlide"
-      );
-      slideRefs[indexOfSecondSlide].classList.remove(
-        "secondSlideMoveBackIfTwoElements",
         "secondSlide"
       );
+      slideRefs[indexOfSecondSlide].classList.add(
+        "secondSlideMoveBackIfTwoElements",
+        "selectedSlide"
+      );
 
-      setValueAfterMoveBack(indexOfFirstSlide, setIndexOfFirstSlide);
-      setValueAfterMoveBack(indexOfSecondSlide, setIndexOfSecondSlide);
-    });
+      Promise.allSettled(arrOfPromises).then(() => {
+        slideRefs[indexOfFirstSlide].classList.remove(
+          "selectedSlideMoveBack",
+          "selectedSlide"
+        );
+        slideRefs[indexOfSecondSlide].classList.remove(
+          "secondSlideMoveBackIfTwoElements",
+          "secondSlide"
+        );
+
+        setValueAfterMoveBack(indexOfFirstSlide, setIndexOfFirstSlide);
+        setValueAfterMoveBack(indexOfSecondSlide, setIndexOfSecondSlide);
+
+        isButtonAvailable = true
+      });
+    }
   }
 
   function setValueAfterMoveBack(indexOfSlide, setNewIndex) {
@@ -357,22 +385,32 @@ let Main = () => {
     }
   }
 
+  function show() {
+    console.log(slideRefs)
+    console.log('indexOfPreviousSlide', indexOfPreviousSlide)
+    console.log('indexOfFirstSlide', indexOfFirstSlide)
+    console.log('indexOfSecondSlide', indexOfSecondSlide)
+    console.log('indexOfThirdSlide', indexOfThirdSlide)
+    console.log('indexOfFourthSlide', indexOfFourthSlide)
+  }
 
 
   return (
     <>
       <div className="slides" onTouchStart={handleTouchStart} onTouchMove={handleTouchMove}>{template}</div>
       <div className="sliderArrows">
-        <button type="button" className="button prev" onClick={moveBackSlide}>
+        <button type="button" className="button prev" onClick={isButtonAvailable ? moveBackSlide : undefined}>
           &larr;
         </button>
         <button
           type="button"
           className="button next"
-          onClick={moveForwardSlide}
+          onClick={isButtonAvailable ? moveForwardSlide : undefined}
         >
           &rarr;
         </button>
+
+        <button onClick={show}>DISPLAY</button>
 
       </div>
     </>
