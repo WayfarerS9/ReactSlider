@@ -1,0 +1,271 @@
+.slide:nth-child(1) {
+  background-image: url(./img/1.jpg);
+}
+.slide:nth-child(2) {
+  background-image: url(./img/2.jpg);
+}
+.slide:nth-child(3) {
+  background-image: url(./img/3.jpg);
+}
+.slide:nth-child(4) {
+  background-image: url(./img/4.jpg);
+}
+.slide:nth-child(5) {
+  background-image: url(./img/5.jpg);
+}
+
+.sliderArrows {
+  margin-top: 2em;
+}
+
+.button {
+  width: 8em;
+  height: 4em;
+}
+
+.slide {
+  width: 800px;
+  height: 533px;
+  flex-shrink: 0;
+  display: none;
+}
+
+.slides {
+  width: 1200px;
+  height: 580px;
+  display: flex;
+  align-items: center;
+  box-shadow: 0 0 10px black;
+  position: relative;
+}
+
+.selectedSlide {
+  display: block;
+  position: absolute;
+  left: 0;
+  z-index: 3;
+}
+
+.secondSlide {
+  display: block;
+  height: 400px;
+  filter: blur(10px);
+  position: absolute;
+  left: 400px;
+  z-index: 2;
+}
+
+.thirdSlide {
+  display: block;
+  height: 300px;
+  filter: blur(10px);
+  position: absolute;
+  left: 350px;
+  z-index: 1;
+}
+
+.selectedSlideMoveOut {
+  display: block;
+  left: 0px;
+  animation-name: mainSlideOut;
+  animation-duration: 0.3s;
+  animation-fill-mode: forwards;
+}
+@keyframes mainSlideOut {
+  from {
+    left: 0px;
+  }
+  to {
+    left: -850px;
+  }
+}
+
+.selectedSlideMoveOutIfTwoSlides {
+  display: block;
+  height: 533px;
+  left: 0px;
+  filter: blur(0px);
+  animation-name: mainSlideOutIfTwoSlides;
+  animation-duration: 0.4s;
+  animation-fill-mode: forwards;
+  z-index: 5;
+}
+@keyframes mainSlideOutIfTwoSlides {
+  from {
+    height: 533px;
+    left: 0px;
+    filter: blur(0px);
+    z-index: 5;
+  }
+  to {
+    height: 400px;
+    left: 400px;
+    filter: blur(10px);
+    z-index: 1;
+  }
+  50% {
+    height: 533px;
+    left: -850px;
+    filter: blur(0px);
+    z-index: 1;
+  }
+}
+
+.thirdSlideMoveOut {
+  position: absolute;
+  left: 350px;
+  z-index: 1;
+  animation-name: thirdSlideOut;
+  animation-duration: 0.3s;
+  animation-fill-mode: forwards;
+}
+@keyframes thirdSlideOut {
+  from {
+    left: 350px;
+    height: 300px;
+  }
+  to {
+    left: 400px;
+    height: 400px;
+  }
+}
+
+.secondSlideMoveOut {
+  display: block;
+  height: 400px;
+  filter: blur(10px);
+  position: absolute;
+  left: 400px;
+  z-index: 2;
+  animation-name: secondSlideOut;
+  animation-duration: 0.3s;
+  animation-fill-mode: forwards;
+}
+@keyframes secondSlideOut {
+  from {
+    height: 400px;
+    filter: blur(10px);
+    left: 400;
+  }
+  to {
+    height: 533px;
+    filter: blur(0px);
+    left: 0px;
+  }
+}
+
+.thirdSlideMoveOut {
+  display: block;
+  height: 300px;
+  filter: blur(10px);
+  position: absolute;
+  left: 350px;
+  z-index: 1;
+  animation-name: thirdSlideOut;
+  animation-duration: 0.3s;
+  animation-fill-mode: forwards;
+}
+@keyframes thirdSlideOut {
+  from {
+    left: 350px;
+    height: 300px;
+  }
+  to {
+    left: 400px;
+    height: 400px;
+  }
+}
+
+.previousSlideMoveBack {
+  display: block;
+  left: -850px;
+  animation-name: previousSlideBack;
+  animation-duration: 0.3s;
+  animation-fill-mode: forwards;
+}
+@keyframes previousSlideBack {
+  from {
+    left: -850px;
+  }
+  to {
+    left: 0px;
+  }
+}
+
+.selectedSlideMoveBack {
+  display: block;
+  height: 533px;
+  filter: blur(0px);
+  position: absolute;
+  left: 0px;
+  z-index: 2;
+  animation-name: selectedSlideBack;
+  animation-duration: 0.3s;
+  animation-fill-mode: forwards;
+}
+@keyframes selectedSlideBack {
+  from {
+    height: 533px;
+    filter: blur(0px);
+    left: 0;
+  }
+  to {
+    height: 400px;
+    filter: blur(10px);
+    left: 400px;
+  }
+}
+
+.secondSlideMoveBack {
+  display: block;
+  height: 400px;
+  filter: blur(10px);
+  position: absolute;
+  left: 400px;
+  z-index: 1;
+  animation-name: secondSlideBack;
+  animation-duration: 0.3s;
+  animation-fill-mode: forwards;
+}
+@keyframes secondSlideBack {
+  from {
+    left: 400px;
+    height: 400px;
+  }
+  to {
+    left: 350px;
+    height: 300px;
+  }
+}
+
+.secondSlideMoveBackIfTwoElements {
+  display: block;
+  height: 400px;
+  filter: blur(10px);
+  position: absolute;
+  left: 400px;
+  z-index: 0;
+  animation-name: secondSlideBackIfTwoElements;
+  animation-duration: 0.4s;
+  animation-fill-mode: forwards;
+}
+@keyframes secondSlideBackIfTwoElements {
+  from {
+    height: 400px;
+    left: 400px;
+    filter: blur(10px);
+    z-index: 0;
+  }
+  to {
+    height: 533px;
+    left: 0px;
+    filter: blur(0px);
+    z-index: 5;
+  }
+  50% {
+    height: 450px;
+    left: -850px;
+    filter: blur(10px);
+    z-index: 0;
+  }
+}
