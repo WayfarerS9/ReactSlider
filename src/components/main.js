@@ -11,14 +11,16 @@ let arrOfPictures = [
 
 let Main = () => {
   const slideRefs = [];
+  let touchPosition = null;
 
-  const [touchPosition, setTouchPosition] = useState(null)
+  const [indexOfPreviousSlide, setIndexOfPreviousSlide] = useState(arrOfPictures.length - 1)
+  const [indexOfFirstSlide, setIndexOfFirstSlide] = useState(0)
+  const [indexOfSecondSlide, setIndexOfSecondSlide] = useState(1)
+  const [indexOfThirdSlide, setIndexOfThirdSlide] = useState(2)
+  const [indexOfFourthSlide, setIndexOfFourthSlide] = useState(3)
 
-
-  const handleTouchSTart = ($event) => {
-    const toucheDown = $event.touches[0].clientX
-    setTouchPosition(toucheDown)
-
+  const handleTouchStart = ($event) => {
+    touchPosition = $event.touches[0].clientX
   }
 
   const handleTouchMove = ($event) => {
@@ -29,25 +31,16 @@ let Main = () => {
     }
 
     const currentTouch = $event.touches[0].clientX;
-    const diff = toucheDown - currentTouch
+    const diff = toucheDown - currentTouch;
 
-    if(diff > 5) {
+    if(diff > 10) {
       moveForwardSlide()
     }
-    if(diff < -5) {
+    if(diff < -10) {
       moveBackSlide()
     }
-
-    setTouchPosition(null)
+    touchPosition = null;
   }
-
-  let indexOfPreviousSlide = arrOfPictures.length - 1;
-  let indexOfFirstSlide = 0;
-  let indexOfSecondSlide = 1;
-  let indexOfThirdSlide = 2;
-  let indexOfFourthSlide = 3;
-
-  const [isButtonBlock, setBlockBUtton] = useState(false)
 
   function createSlideRefs(slide) {
     let slideRef = slide;
@@ -74,7 +67,6 @@ let Main = () => {
       moveForwardSlidesOfTwoElemets();
       return;
     }    
-
 
     let promiseOfFirstSlide = new Promise((resolve, reject) => {
       slideRefs[indexOfFirstSlide].addEventListener(
@@ -148,15 +140,14 @@ let Main = () => {
         slideRefs[indexOfFirstSlide].classList.add("thirdSlide");
       }
 
-      indexOfFirstSlide = setValueAfterMoveForward(indexOfFirstSlide);
-      indexOfSecondSlide = setValueAfterMoveForward(indexOfSecondSlide);
-      indexOfThirdSlide = setValueAfterMoveForward(indexOfThirdSlide);
-      indexOfPreviousSlide = setValueAfterMoveForward(indexOfPreviousSlide);
+      setValueAfterMoveForward(indexOfFirstSlide, setIndexOfFirstSlide);
+      setValueAfterMoveForward(indexOfSecondSlide, setIndexOfSecondSlide);
+      setValueAfterMoveForward(indexOfThirdSlide, setIndexOfThirdSlide);
+      setValueAfterMoveForward(indexOfPreviousSlide, setIndexOfPreviousSlide);
 
       if (slideRefs.length > 3) {
-        indexOfFourthSlide = setValueAfterMoveForward(indexOfFourthSlide);
+        setValueAfterMoveForward(indexOfFourthSlide, setIndexOfFourthSlide);
       }
-      console.log('hello')
     });
   }
 
@@ -206,17 +197,17 @@ let Main = () => {
       slideRefs[indexOfFirstSlide].classList.add("secondSlide");
       slideRefs[indexOfSecondSlide].classList.add("selectedSlide");
 
-      indexOfFirstSlide = setValueAfterMoveForward(indexOfFirstSlide);
-      indexOfSecondSlide = setValueAfterMoveForward(indexOfSecondSlide);
+      setValueAfterMoveForward(indexOfFirstSlide, setIndexOfFirstSlide);
+      setValueAfterMoveForward(indexOfSecondSlide, setIndexOfSecondSlide);
     });
   }
 
-  function setValueAfterMoveForward(indexOfSlide) {
+  function setValueAfterMoveForward(indexOfSlide, setNewIndex) {
     let result = (indexOfSlide += 1);
     if (result > slideRefs.length - 1) {
-      return result - slideRefs.length;
+      setNewIndex(result - slideRefs.length);
     } else {
-      return result;
+      setNewIndex(result);
     }
   }
 
@@ -296,11 +287,11 @@ let Main = () => {
         "secondSlide"
       );
 
-      indexOfFirstSlide = setValueAfterMoveBack(indexOfFirstSlide);
-      indexOfSecondSlide = setValueAfterMoveBack(indexOfSecondSlide);
-      indexOfThirdSlide = setValueAfterMoveBack(indexOfThirdSlide);
-      indexOfFourthSlide = setValueAfterMoveBack(indexOfFourthSlide);
-      indexOfPreviousSlide = setValueAfterMoveBack(indexOfPreviousSlide);
+      setValueAfterMoveBack(indexOfFirstSlide, setIndexOfFirstSlide);
+      setValueAfterMoveBack(indexOfSecondSlide, setIndexOfSecondSlide);
+      setValueAfterMoveBack(indexOfThirdSlide, setIndexOfThirdSlide);
+      setValueAfterMoveBack(indexOfFourthSlide, setIndexOfFourthSlide);
+      setValueAfterMoveBack(indexOfPreviousSlide, setIndexOfPreviousSlide);
     });
   }
 
@@ -352,44 +343,36 @@ let Main = () => {
         "secondSlide"
       );
 
-      indexOfFirstSlide = setValueAfterMoveBack(indexOfFirstSlide);
-      indexOfSecondSlide = setValueAfterMoveBack(indexOfSecondSlide);
+      setValueAfterMoveBack(indexOfFirstSlide, setIndexOfFirstSlide);
+      setValueAfterMoveBack(indexOfSecondSlide, setIndexOfSecondSlide);
     });
   }
 
-  function setValueAfterMoveBack(indexOfSlide) {
+  function setValueAfterMoveBack(indexOfSlide, setNewIndex) {
     let result = (indexOfSlide -= 1);
     if (result < 0) {
-      return slideRefs.length + result;
+      setNewIndex(slideRefs.length + result);
     } else {
-      return result;
+      setNewIndex(result);
     }
   }
 
-  function show() {
-    console.log(slideRefs)
-    console.log(indexOfPreviousSlide)
-    console.log(indexOfFirstSlide)
-    console.log(indexOfSecondSlide)
-    console.log(indexOfThirdSlide)
-    console.log(indexOfFourthSlide)
-  }
+
 
   return (
     <>
-      <div className="slides" onTouchStart={handleTouchSTart} onTouchMove={handleTouchMove}>{template}</div>
+      <div className="slides" onTouchStart={handleTouchStart} onTouchMove={handleTouchMove}>{template}</div>
       <div className="sliderArrows">
-        <button type="button" className="button prev" onClick={!isButtonBlock ? moveBackSlide : undefined}>
+        <button type="button" className="button prev" onClick={moveBackSlide}>
           &larr;
         </button>
         <button
           type="button"
           className="button next"
-          onClick={!isButtonBlock ? moveForwardSlide : undefined}
+          onClick={moveForwardSlide}
         >
           &rarr;
         </button>
-        <button onClick={show}>DISPLAY</button>
 
       </div>
     </>
